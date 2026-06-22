@@ -1,0 +1,466 @@
+/*
+ * where.fibe.gg — single-screen statement
+ * "Phoenix Terminal" — phosphor green × signal gold on a warm olive-graphite
+ * field. Shares the palette + type system of the why/whats/when family.
+ */
+
+:root {
+  /* Brand — phosphor green, the living strand */
+  --brand-50:  #f1fbe6;
+  --brand-200: #c8f0a3;
+  --brand-300: #abe87f;
+  --brand-400: #92df62;
+  --brand-500: #79d44e;
+  --brand-600: #5cb43a;
+  --brand-700: #46942e;
+  --brand-800: #357424;
+
+  /* Gold — the second strand of the helix */
+  --gold-200: #f9e8a4;
+  --gold-300: #f5da79;
+  --gold-400: #eec854;
+  --gold-500: #e2b33a;
+  --gold-600: #c0952b;
+  --gold-700: #99761f;
+
+  /* Ember — phoenix fire, used sparingly */
+  --ember-400: #f08760;
+  --ember-500: #e26a44;
+
+  /* Field — warm olive graphite. Not black, not white: console metal. */
+  --ink-0:  #191c14;
+  --ink-1:  #2e3327;
+  --ink-2:  #252a1e;
+  --ink-3:  #20251a;
+  --ink-4:  #434a35;
+  --ink-5:  #545c42;
+  --ink-6:  #757d5e;
+
+  /* Text — warm bone */
+  --fg-0:   #fdfbf0;
+  --fg-1:   #f3f0e0;
+  --fg-2:   #e5e2cf;
+  --fg-3:   #c7c4ae;
+  --fg-4:   #a19f89;
+  --fg-5:   #918f7c;
+
+  /* Layout */
+  --maxw: 1180px;
+  --readw: 760px;
+  --pad-x: clamp(1.1rem, 4vw, 2.25rem);
+  --nav-h: 56px;
+
+  /* Type */
+  --font-display: "Chakra Petch", "Play", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --radius-sm: 3px;
+  --radius:    6px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  margin: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0 1px, transparent 1px 4px),
+    var(--ink-1);
+  color: var(--fg-2);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Plain block flow. The hero (.where) carries its own min-height to fill the
+     screen, so no flex/grid min-height quirk (e.g. Safari's) can shrink it.
+     The footer simply flows below the full-height hero. */
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Ambient phosphor + gold glow blooms, anchored to the viewport. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 22% -8%, color-mix(in srgb, var(--brand-700) 22%, transparent) 0%, transparent 60%),
+    radial-gradient(760px 480px at 92% -2%, color-mix(in srgb, var(--gold-700) 16%, transparent) 0%, transparent 55%);
+  transform: translateZ(0);
+}
+
+img, svg { display: block; max-width: 100%; }
+
+a { color: var(--brand-400); text-decoration: none; transition: color 0.15s; }
+a:hover { color: var(--brand-300); }
+
+h1, h2, h3, h4 {
+  color: var(--fg-1);
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  margin: 0;
+}
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+::selection { background: color-mix(in srgb, var(--brand-500) 40%, transparent); color: var(--fg-0); }
+:focus-visible { outline: 2px solid var(--brand-400); outline-offset: 2px; border-radius: 3px; }
+
+.skip-link {
+  position: absolute;
+  top: -100px; left: 1rem;
+  background: var(--brand-500); color: var(--ink-0);
+  padding: 0.5rem 0.9rem; border-radius: 4px; font-weight: 600;
+  z-index: 100;
+}
+.skip-link:focus { top: 1rem; }
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.25rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn--primary {
+  background: linear-gradient(180deg, var(--brand-400) 0%, var(--brand-600) 100%);
+  color: var(--ink-0);
+  box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--brand-500) 70%, transparent);
+}
+.btn--primary:hover { background: linear-gradient(180deg, var(--brand-300) 0%, var(--brand-500) 100%); color: var(--ink-0); }
+.btn--ghost {
+  background: color-mix(in srgb, var(--ink-2) 60%, transparent);
+  border-color: var(--ink-5);
+  color: var(--fg-1);
+}
+.btn--ghost:hover { border-color: var(--brand-500); color: var(--brand-200); background: color-mix(in srgb, var(--brand-500) 8%, transparent); }
+
+/* ──────────────────────────────────────────────────────────────────
+   NAV — brand + the single fibe → CTA (no section links by request)
+   ────────────────────────────────────────────────────────────────── */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--ink-0) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid var(--ink-4);
+}
+.nav::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--brand-500) 55%, transparent) 18%,
+    color-mix(in srgb, var(--gold-400) 55%, transparent) 82%,
+    transparent 100%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.nav__inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0.55rem var(--pad-x);
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.nav__brand {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  color: var(--fg-1);
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 1.05rem; letter-spacing: 0.01em;
+}
+.nav__brand:hover { color: var(--fg-1); }
+.nav__mark {
+  width: 28px; height: 28px; border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--ink-5);
+}
+.nav__word { color: var(--fg-1); }
+
+.nav__cta {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 0.46rem 0.95rem;
+  border: none;
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+  background: linear-gradient(180deg, var(--gold-300) 0%, var(--gold-500) 100%);
+  color: var(--ink-0);
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.nav__cta:hover { background: linear-gradient(180deg, var(--gold-200) 0%, var(--gold-400) 100%); color: var(--ink-0); }
+
+/* ──────────────────────────────────────────────────────────────────
+   WHERE — the single screen
+   ────────────────────────────────────────────────────────────────── */
+.where {
+  position: relative;
+  overflow: clip;
+  /* Full-screen hero: fill the viewport below the sticky 56px nav. A plain
+     block min-height fills in every engine (no flexbox min-height bug); if the
+     content is ever taller, it grows and scrolls instead of clipping. The
+     footer flows directly below this screen. */
+  min-height: calc(100vh - var(--nav-h));
+  min-height: calc(100dvh - var(--nav-h));
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%;
+  max-width: min(1480px, 96vw);
+  margin: 0 auto;
+  padding: clamp(0.5rem, 1.6vh, 1rem) var(--pad-x) clamp(0.6rem, 2vh, 1.2rem);
+  text-align: center;
+}
+/* The phoenix — a tinted ghost rising behind the statement: rebirth, freedom. */
+.where__phoenix {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: min(680px, 92vw);
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.12;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+.where__inner {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: space-between;   /* header top · blocks middle · footer bottom */
+  gap: clamp(1rem, 3vh, 2rem);
+}
+.where__head { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+.where__foot { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+
+/* header1 — the question, as a kicker heading above the big statement. */
+.where__kicker {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.6vw, 1.55rem);
+  font-weight: 600; letter-spacing: 0.005em; line-height: 1.1;
+  color: var(--gold-300);
+}
+
+/* header2 — the big statement. */
+.where__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 4.6vw, 2.9rem);
+  font-weight: 700; letter-spacing: -0.025em; line-height: 1.03;
+  color: var(--fg-0); text-wrap: balance;
+  max-width: 32ch;
+}
+.where__title .accent {
+  background: linear-gradient(100deg, var(--brand-300) 0%, var(--gold-400) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* The question + its answer, read as one connected unit (no card, no border). */
+.where__qa {
+  max-width: 56ch;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.3rem;
+}
+.where__q {
+  color: var(--fg-4);
+  font-size: clamp(0.9rem, 1.9vw, 1.05rem);
+  line-height: 1.4; text-wrap: pretty;
+}
+.where__q b { color: var(--fg-2); font-weight: 600; }
+.where__answer {
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2.3vw, 1.35rem);
+  font-weight: 600; line-height: 1.28;
+  color: var(--fg-1); text-wrap: balance;
+}
+.where__answer .em { color: var(--brand-300); }
+
+/* The three scale stages. Grid grows to fill the middle band; the single row
+   stretches so the cards are as large as the screen allows. */
+.where__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.8rem, 1.8vw, 1.4rem);
+}
+.where__card {
+  position: relative;
+  overflow: clip;
+  min-height: clamp(150px, 20vh, 220px);
+  display: flex; flex-direction: column; gap: 0.45rem;
+  padding: clamp(0.85rem, 2vh, 1.3rem) clamp(1rem, 1.8vw, 1.5rem);
+  border: 1px solid var(--ink-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--ink-2) 82%, transparent) 0%, color-mix(in srgb, var(--ink-3) 82%, transparent) 100%);
+  text-align: left;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.where__card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--brand-500) 45%, var(--ink-4));
+}
+/* Keep real content above the big faint role watermark. */
+.where__card > *:not(.where__role) { position: relative; z-index: 1; }
+.where__stage {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3.2vw, 1.9rem);
+  font-weight: 700; letter-spacing: -0.02em; line-height: 1;
+  color: var(--gold-300);
+}
+.where__stage .arr { color: var(--ink-6); margin: 0 0.15em; font-weight: 500; }
+/* Big faint label in the top-right corner — reads as a watermark, not a line of
+   text: just a touch lighter than the card background. */
+.where__role {
+  position: absolute;
+  top: clamp(0.5rem, 1.6vh, 1rem);
+  right: clamp(0.7rem, 1.8vw, 1.3rem);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.9vw, 1.45rem);
+  font-weight: 700; line-height: 1;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-5);
+  pointer-events: none;
+  z-index: 0;
+}
+/* short description of the stage */
+.where__detail {
+  color: var(--fg-3);
+  font-size: clamp(0.84rem, 1.7vw, 0.95rem);
+  line-height: 1.4;
+}
+/* who handles it — pinned to the card foot, behind a hairline. The providers
+   spread across the full width as columns (2 for startups/scaleups, 3 for at
+   scale) with the + signs as separators. */
+.where__how {
+  margin-top: auto;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--ink-4);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;
+  color: var(--fg-2); font-size: clamp(0.92rem, 1.9vw, 1.1rem); line-height: 1.3;
+}
+.where__how > span { white-space: nowrap; }
+.where__how .plus { flex: none; color: var(--ink-6); font-weight: 400; }
+.where__how .pill-cloud { color: #ADD8E6; }
+.where__how .pill-llm { color: #DE3163; }
+
+.where__note {
+  font-family: var(--font-mono);
+  font-size: clamp(0.78rem, 1.7vw, 0.9rem);
+  letter-spacing: 0.02em;
+  color: var(--fg-4);
+}
+.where__note b { color: var(--gold-300); font-weight: 700; }
+
+@media (max-width: 720px) {
+  .where__grid { grid-template-columns: 1fr; }
+  .where { justify-content: flex-start; }
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   FOOTER — uniform across the Fibe family of sites
+   ────────────────────────────────────────────────────────────────── */
+.footer {
+  margin-top: auto;
+  background: var(--ink-0);
+  border-top: 1px solid var(--ink-4);
+  padding: 1.15rem var(--pad-x) 0.95rem;
+}
+.footer__inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  display: grid;
+  gap: 0.65rem;
+  justify-items: center;
+  text-align: center;
+}
+.footer__family {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+  gap: 0.1rem 0.15rem;
+  font-size: 0.86rem;
+  color: var(--fg-3);
+}
+.footer__family-link {
+  color: inherit;
+  padding: 0.15rem 0.25rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.footer__family-link:hover { color: var(--fg-1); text-decoration: underline; }
+.footer__family-link[aria-current="page"] { color: var(--fg-1); font-weight: 600; }
+.footer__family-sep { color: var(--fg-5); margin: 0 0.25rem; }
+
+.footer__social { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+.footer__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 50%;
+  color: var(--fg-3);
+  transition: color 0.15s, background-color 0.15s, transform 0.15s;
+}
+.footer__icon:hover {
+  color: var(--brand-500);
+  background: color-mix(in srgb, var(--brand-500) 10%, transparent);
+  transform: translateY(-1px);
+}
+
+.footer__support {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(0, 87, 183, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(0, 87, 184, 0.15) 0%, rgba(255, 221, 0, 0.08) 100%);
+}
+.footer__support .flag { font-size: 1.05em; }
+.footer__support strong { color: var(--fg-1); margin-right: 0.4rem; }
+.footer__support-sub { color: var(--fg-3); font-size: 0.92rem; }
+
+.footer__legal {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+  gap: 0.1rem 0.15rem;
+  font-size: 0.8rem;
+  color: var(--fg-5);
+}
+.footer__legal-link {
+  color: inherit;
+  text-decoration: none;
+  padding: 0.15rem 0.25rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.footer__legal-link:hover { color: var(--fg-1); text-decoration: underline; }
+.footer__legal-sep { color: var(--fg-5); margin: 0 0.25rem; }
+
+.footer__copy { font-size: 0.8rem; color: var(--fg-5); }

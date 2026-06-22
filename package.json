@@ -1,0 +1,9 @@
+{
+  "name": "where-fibe-gg",
+  "private": true,
+  "type": "module",
+  "description": "where.fibe.gg — single-screen statement (static, hand-authored index.html).",
+  "scripts": {
+    "dev": "node scripts/dev.mjs"
+  }
+}
